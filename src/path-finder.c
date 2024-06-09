@@ -1,6 +1,8 @@
 #include "headers/game/game.h"
 #include "headers/game/player.h"
 #include "headers/menu/menu.h"
+#include <time.h>
+#include <stdlib.h>
 
 player_t *player;
 
@@ -45,6 +47,7 @@ void end_program()
 int main()
 {
     setup_ncurses();
+    srand(time(NULL)); 
 
     player = init_player();
 
@@ -53,6 +56,8 @@ int main()
     game = run_menu(menu, player);
 
     assert(game != NULL);
+
+    run_game(game, player);
 
     restore_ncurses();
     return EXIT_SUCCESS;

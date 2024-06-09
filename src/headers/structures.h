@@ -27,16 +27,13 @@ typedef struct file_t file_t;
 typedef struct directory_t directory_t;
 struct directory_t
 {
+    char name[10];
     file_t **files;
     directory_t **dirs;
-};
 
-struct tree_t
-{
-    directory_t *root;
     int depth;
 };
-typedef struct tree_t tree_t;
+
 
 struct player_t
 {
@@ -54,7 +51,7 @@ struct game_t
     int difficulty,
         running;
     
-    tree_t *current;
+    directory_t *current;
 };
 typedef struct game_t game_t;
 
