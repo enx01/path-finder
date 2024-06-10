@@ -1,5 +1,6 @@
 #include "headers/game/game.h"
 #include "headers/game/player.h"
+#include "headers/words_database/name_generator.h"
 #include "headers/menu/menu.h"
 #include <time.h>
 #include <stdlib.h>
@@ -9,6 +10,8 @@ player_t *player;
 menu_t *menu;
 
 game_t *game = NULL;
+
+name_generator *ng;
 
 void setup_ncurses() 
 {
@@ -48,6 +51,8 @@ int main()
 {
     setup_ncurses();
     srand(time(NULL)); 
+
+    ng = create_ng("res/words.txt");
 
     player = init_player();
 

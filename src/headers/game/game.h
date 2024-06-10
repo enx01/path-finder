@@ -11,6 +11,8 @@ game_t *init_game();
 
 void run_game(game_t *, player_t *);
 
+void render_game(game_t *, player_t *);
+
 void free_game(game_t *);
 
 #endif // !GAME_H

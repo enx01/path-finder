@@ -1,5 +1,6 @@
 #include "../headers/game/game.h"
 #include "../headers/game/player.h"
+#include "../headers/tree/directory.h"
 
 game_t *init_game()
 {
@@ -18,16 +19,18 @@ void run_game(game_t *g, player_t *p)
 {
     g->running = 1;
 
+    g->current = generate_directory(2,0);
+
     ACTION a;
     while(g->running) 
     {
         a = handle_input(p);
 
-        
+        render_game(g, p);
     }
 }
 
-void render_game(menu_t *m, player_t *p)
+void render_game(game_t *g, player_t *p)
 {
     // Borders
     for (int x = 0; x < GAME_WIDTH; x++) {
@@ -43,8 +46,17 @@ void render_game(menu_t *m, player_t *p)
     mvaddch(GAME_HEIGHT-2, 0,'o');
     mvaddch(GAME_HEIGHT-2, GAME_WIDTH-1,'o');   
 
+    for (int i = 1; i < GAME_WIDTH-1; i++)
+    {
+        for (int j = 1; j < GAME_HEIGHT-2; ++j)
+        {
+            mvaddch(j, i, ' ');
+        }
+    }
+
     // render_word
-    
+
+    render_directory(g->current, 2);
 
     attron(COLOR_PAIR(1)); // Enable custom color 1
     attron(A_BOLD); // Enable bold

@@ -3,6 +3,7 @@
 #define INPUT_MAX 255
 #define GAME_WIDTH 30
 #define GAME_HEIGHT 15
+#define MAX_WORDS 100
 
 #include <ncurses.h>
 #include <unistd.h>
@@ -18,6 +19,15 @@ typedef enum ACTION {
     OK_MENU, COMPUTE, QUIT
 } ACTION;
 
+struct name_generator
+{
+    char *db[MAX_WORDS];
+    int used[MAX_WORDS];
+};
+typedef struct name_generator name_generator;
+
+extern name_generator *ng;
+
 struct file_t
 {
     char name[10];
@@ -29,7 +39,10 @@ struct directory_t
 {
     char name[10];
     file_t **files;
+    int nb_files;
+
     directory_t **dirs;
+    int nb_dirs;
 
     int depth;
 };
