@@ -24,6 +24,8 @@ game_t *run_menu(menu_t *m, player_t *p)
         update_cursor(m, a);
 
         render_menu(m, p);
+        
+        nanosleep(&ts, NULL);
     }
 
     g = malloc(sizeof(game_t));
@@ -81,6 +83,7 @@ void render_menu(menu_t *m, player_t *p)
 
     mvprintw(1, 10, "Path-finder");
     mvprintw(3, 6, "Choose difficulty :");
+
 
     for (int i = 1; i < 29; i++)
     {

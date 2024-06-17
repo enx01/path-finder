@@ -8,5 +8,7 @@ file_t *generate_file()
 
     generate_name(res->name);
 
+    fprintf(stderr, "generating file %s\n", res->name);
+
     return res;    
 }

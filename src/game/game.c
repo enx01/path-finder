@@ -19,7 +19,7 @@ void run_game(game_t *g, player_t *p)
 {
     g->running = 1;
 
-    g->current = generate_directory(2,0);
+    g->current = generate_directory(2);
 
     ACTION a;
     while(g->running) 
@@ -27,6 +27,8 @@ void run_game(game_t *g, player_t *p)
         a = handle_input(p);
 
         render_game(g, p);
+
+        nanosleep(&ts, NULL);
     }
 }
 
@@ -56,7 +58,9 @@ void render_game(game_t *g, player_t *p)
 
     // render_word
 
-    render_directory(g->current, 2);
+    int row = 1;
+    render_directory(g->current, 1, 1, &row);
+    // end_program();
 
     attron(COLOR_PAIR(1)); // Enable custom color 1
     attron(A_BOLD); // Enable bold

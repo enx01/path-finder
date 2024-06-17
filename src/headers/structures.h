@@ -4,6 +4,8 @@
 #define GAME_WIDTH 30
 #define GAME_HEIGHT 15
 #define MAX_WORDS 100
+#define FRAME_RATE 20
+#define FRAME_DELAY_NS 1000000000 / FRAME_RATE // in nanoseconds
 
 #include <ncurses.h>
 #include <unistd.h>
@@ -11,6 +13,8 @@
 #include <string.h>
 #include <stdio.h>
 #include <assert.h>
+#include <locale.h>
+#include <time.h>
 
 typedef enum GAMESTATE {MENU, IN_GAME} GAMESTATE;
 typedef enum ACTION {
@@ -27,6 +31,7 @@ struct name_generator
 typedef struct name_generator name_generator;
 
 extern name_generator *ng;
+extern struct timespec ts;
 
 struct file_t
 {
@@ -38,6 +43,7 @@ typedef struct directory_t directory_t;
 struct directory_t
 {
     char name[10];
+    
     file_t **files;
     int nb_files;
 
