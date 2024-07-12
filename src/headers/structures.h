@@ -1,8 +1,8 @@
 #ifndef STRUCTURES_H
 #define STRUCTURES_H
 #define INPUT_MAX 255
-#define GAME_WIDTH 30
-#define GAME_HEIGHT 15
+#define GAME_WIDTH 50
+#define GAME_HEIGHT 30
 #define MAX_WORDS 100
 #define FRAME_RATE 20
 #define FRAME_DELAY_NS 1000000000 / FRAME_RATE // in nanoseconds

@@ -2,86 +2,15 @@
 #include "../headers/tree/file.h"
 #include "../headers/words_database/name_generator.h"
 
-// directory_t *generate_directory(int desired_depth, int depth)
-// {
-//     directory_t *res = malloc(sizeof(directory_t));
-
-//     res->depth = depth;
-
-//     int nb_items = rand() % (2 + 1 - 0) + 0;
-
-//     generate_name(res->name);    
-
-//     if (desired_depth == depth)
-//     {
-//         res->dirs = NULL;
-//         res->files = malloc(sizeof(file_t) * nb_items);
-
-//         for (int i = 0; i < nb_items+1; i++)
-//         {
-//             res->files[i] = generate_file();
-//         }
-
-//         return res;
-//     }
-
-//     int model[nb_items];
-//     int nb_dir = 0;
-    
-//     int dir;
-//     for (int i = 0; i < nb_items; i++)
-//     {
-//         dir = rand() % (1 + 1 - 0) + 0;
-
-//         if (dir)
-//         {
-//             nb_dir++;
-//         }
-
-//         model[i] = dir;
-//     }
-
-//     int nb_files = nb_items - nb_dir;
-
-//     if (!nb_dir) 
-//     {
-//         nb_dir++;
-//         // nb_files--;
-//     }
-
-//     assert(nb_dir != 0);
-//     // assert(nb_files != 0);
-
-//     res->dirs = malloc(sizeof(directory_t) * nb_dir);
-//     res->files = malloc(sizeof(file_t) * nb_files);
-
-//     res->nb_files = nb_files;
-//     res->nb_dirs = nb_dir;
-
-//     fprintf(stderr, "dir : %s. files : %d, dirs : %d\n", res->name, nb_files, nb_dir);
-
-//     for (int i = 0; i < nb_files; i++)
-//     {
-//         res->files[i] = generate_file();
-//     }
-    
-//     for (int i = 0; i < nb_dir; i++)
-//     {
-//         res->dirs[i] = generate_directory(desired_depth, depth+1);
-//     }
-
-//     return res;
-// }
-
-directory_t *generate_directory(int desired_depth)
+directory_t *generate_directory(int desired_depth, int desired_elements)
 {
-    return gen_dir_aux(desired_depth, 0);
+    return gen_dir_aux(desired_depth, desired_elements , 0, desired_elements);
 }
 
-directory_t *gen_dir_aux(int desired_depth, int depth)
+directory_t *gen_dir_aux(int desired_depth, int desired_elements, int depth,
+                        int remaining_elements)
 {
     directory_t *dir = (directory_t *)malloc(sizeof(directory_t));
-    
     
     generate_name(dir->name);
     
@@ -89,28 +18,18 @@ directory_t *gen_dir_aux(int desired_depth, int depth)
 
     fprintf(stderr, "generating dir %s of depth %d\n",dir->name, dir->depth);
     
-    if (depth == desired_depth)
-    {
-        dir->nb_dirs = 0;
-        dir->dirs = NULL;
-    }
-    else 
-    {
-        // Randomly decide the number of subdirectories (1 to 3)
-        dir->nb_dirs = rand() % (2 + 1 - 1) + 1;
 
-        dir->dirs = (directory_t **)malloc(dir->nb_dirs * sizeof(directory_t *));
-    
-        // Recursively generate subdirectories
-        for (int i = 0; i < dir->nb_dirs; i++)
+    // Randomly decide the number of files (0 to desired_elements/desired_depth)
+    if (remaining_elements != 0)
+    {
+        do
         {
-            dir->dirs[i] = gen_dir_aux(desired_depth, depth + 1);
+            dir->nb_files = rand() % (desired_elements/desired_depth);
         }
-
+        while(dir->nb_files - remaining_elements >= 0);
     }
     
-    // Randomly decide the number of files (0 to 3)
-    dir->nb_files = rand() % 4;
+
     if (dir->nb_files)
     {
         dir->files = (file_t **)malloc(dir->nb_files * sizeof(file_t *));
@@ -122,92 +41,117 @@ directory_t *gen_dir_aux(int desired_depth, int depth)
         }
     }
 
+    if (depth == desired_depth)
+    {
+        dir->nb_dirs = 0;
+        dir->dirs = NULL;
+    }
+    else 
+    {
+        // Randomly decide the number of subdirectories (1 to 3)
+        dir->nb_dirs = rand() % (2 + 1 - 1) + 1;
+
+        dir->dirs = malloc(dir->nb_dirs * sizeof(directory_t *));
     
+        // Recursively generate subdirectories
+        for (int i = 0; i < dir->nb_dirs; i++)
+        {
+            dir->dirs[i] = gen_dir_aux(desired_depth,
+                                        desired_elements,
+                                        depth + 1,
+                                        remaining_elements - (dir->nb_files));
+        }
+
+    }
     
     return dir;
 }
 
-// int render_directory(directory_t *dir, int line, int is_last)
-// {
-//     // fprintf(stderr, "printing at depth = %d\n", dir->depth);
-//     attron(COLOR_PAIR(2)); // Enable custom color 1
-//     mvprintw(line, (dir->depth * 5) + 1, dir->name);
-//     attroff(COLOR_PAIR(2)); // Disable custom color 1
-
-//     int acc = 0;
-//     if (dir->nb_dirs > 0)
-//     {
-//         for (int i = 0; i < dir->nb_dirs; ++i)
-//         {
-//             acc++;
-//             acc += render_directory(dir->dirs[i], line+acc);
-//         }
-//     }
-//     if (dir->nb_files > 0)
-//     {
-//         for (int i = 0; i < dir->nb_files; ++i)
-//         {
-//             acc++;
-//             mvprintw(line+acc, (dir->depth+1 * 5) + 1, dir->files[i]->name);
-//         }
-//     }
-//     // if (dir->nb_dirs > 0)
-//     // {
-//         // for (int i = 0; i < dir->nb_dirs; ++i)
-//         // {
-//         //     acc++;
-//         //     render_directory(dir->dirs[i], line+acc);
-//         // }
-//     // }
-//     return acc;
-// }
-
-void render_directory(directory_t *dir, int level, int is_last, int *row) {
-    // Print the current directory name
-    for (int i = 1; i < level; i++) {
-        mvprintw(*row, i * 4, is_last ? "   " : " |  ");
+void free_directory(directory_t *dir)
+{
+    for (int i = 0; i < dir->nb_files; ++i)
+    {
+        fprintf(stderr, "freeing file %s of dir %s\n", dir->files[i]->name,
+                                                    dir->name);
+        free(dir->files[i]);
     }
-    if (level > 0) {
-        mvprintw(*row, level * 4 - 4, is_last ? " o--" : " |--");
+    
+    if (dir->nb_files)
+    {
+        fprintf(stderr, "freeing file array of dir %s\n", dir->name);
+        free(dir->files);
     }
-    mvprintw(*row, level * 4, "%s", dir->name);
-    (*row)++;
-
-    // Print the files in the current directory
-    for (int i = 0; i < dir->nb_files; i++) {
-        for (int j = 0; j < level; j++) {
-            mvprintw(*row, j * 4, " |  ");
-        }
-        mvprintw(*row, level * 4, " |--%s", dir->files[i]->name);
-        (*row)++;
+    
+    for (int i = 0; i < dir->nb_dirs; ++i)
+    {
+        fprintf(stderr, "freeing dir %s of dir %s\n", dir->dirs[i]->name,
+                                                    dir->name);
+        free_directory(dir->dirs[i]);
     }
 
-    // Print the subdirectories recursively
-    for (int i = 0; i < dir->nb_dirs; i++) {
-        render_directory(dir->dirs[i], level + 1, i == dir->nb_dirs - 1, row);
-    }
+    fprintf(stderr, "freeing dirs array of dir %s\n", dir->name);
+    free(dir->dirs);
+
+
+    fprintf(stderr, "freeing dir %s\n", dir->name);
+    free(dir);
 }
 
-// void render_directory(directory_t *dir, int level, int is_last) {
-//     // Print the current directory name
-//     for (int i = 0; i < level; i++) {
-//         fprintf(stderr, is_last ? "    " : " │   ");
-//     }
-//     if (level > 0) {
-//         fprintf(stderr, is_last ? " └────" : " ├────");
-//     }
-//     fprintf(stderr, "%s\n", dir->name);
+int nb_elements_in_dir(directory_t *dir)
+{
+    return nb_aux(dir, 1);
+}
 
-//     // Print the files in the current directory
-//     for (int i = 0; i < dir->nb_files; i++) {
-//         for (int j = 0; j <= level; j++) {
-//             fprintf(stderr, " │   ");
-//         }
-//         fprintf(stderr, " ├────%s\n", dir->files[i]->name);
-//     }
+int nb_aux(directory_t *dir, int res)
+{
+    res += dir->nb_dirs + dir->nb_files;
 
-//     // Print the subdirectories recursively
-//     for (int i = 0; i < dir->nb_dirs; i++) {
-//         render_directory(dir->dirs[i], level + 1, i == dir->nb_dirs);
-//     }
-// }
+    for (int i = 0; i < dir->nb_dirs; i++)
+    {
+        res += nb_aux(dir->dirs[i], 0);
+    }
+
+    return res;
+}
+    
+void render_directory(directory_t *dir)
+{
+    mvprintw(1, 1, "-)");
+    render_aux(dir, 1, 4);
+}
+
+void render_aux(directory_t *dir, int x, int y)
+{
+    mvprintw(x, y-1, "%s", dir->name);
+
+    if (dir->nb_dirs + dir->nb_files >= 1)
+    {
+        int n = (nb_elements_in_dir(dir)*2);
+
+        for (int i = x+1; i < n-1; ++i)
+        {
+            mvprintw(i, y, "|");
+        }
+    }
+    
+
+    int newX = x+2;
+
+    for (int i = 0; i < dir->nb_dirs; ++i)
+    {
+        mvaddch(newX, y, 'L');
+
+        render_aux(dir->dirs[i], newX, y+4);
+
+        newX += (nb_elements_in_dir(dir->dirs[i])*2);
+    }
+
+    for (int i = 0; i < dir->nb_files; ++i)
+    {
+        mvaddch(newX, y, 'L');
+
+        mvprintw(newX, y + 3, "%s", dir->files[i]);
+
+        newX += 2;
+    }
+}

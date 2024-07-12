@@ -19,7 +19,9 @@ void run_game(game_t *g, player_t *p)
 {
     g->running = 1;
 
-    g->current = generate_directory(2);
+    g->current = generate_directory(2, 5);
+
+    fprintf(stderr, "number of elements in tree : %d\n", nb_elements_in_dir(g->current));
 
     ACTION a;
     while(g->running) 
@@ -59,7 +61,7 @@ void render_game(game_t *g, player_t *p)
     // render_word
 
     int row = 1;
-    render_directory(g->current, 1, 1, &row);
+    render_directory(g->current);
     // end_program();
 
     attron(COLOR_PAIR(1)); // Enable custom color 1
@@ -79,7 +81,10 @@ void render_game(game_t *g, player_t *p)
 
 void free_game(game_t *g)
 {
-    // TODO : Free current tree
+    if (g->current != NULL)
+    {
+        free_directory(g->current);
+    }
 
     free(g);
 }

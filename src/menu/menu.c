@@ -81,38 +81,84 @@ void render_menu(menu_t *m, player_t *p)
     mvaddch(GAME_HEIGHT-2, 0,'o');
     mvaddch(GAME_HEIGHT-2, GAME_WIDTH-1,'o');   
 
-    mvprintw(1, 10, "Path-finder");
-    mvprintw(3, 6, "Choose difficulty :");
+    char *buf = malloc(GAME_WIDTH);
+
+    strcpy(buf, "Path-finder");
+
+    mvprintw(1, (GAME_WIDTH/2) - strlen(buf)/2, buf);
+
+    strcpy(buf, "Choose difficulty :");
+
+    mvprintw(3, (GAME_WIDTH/2) - strlen(buf)/2, buf);
 
 
-    for (int i = 1; i < 29; i++)
-    {
-        mvaddch(6, i, ' ');
-        mvaddch(7, i, ' ');
-        mvaddch(8, i, ' ');
-    }
+    
     
     switch (m->difficulty_cursor)
     {
     case 0:
-        mvprintw(6, 11, "> Easy <");
-        mvprintw(7, 12, "Normal");
-        mvprintw(8, 13, "Hard");
+
+        for (int i = 1; i < GAME_WIDTH-1; i++)
+        {
+            mvaddch(6, i, ' ');
+            mvaddch(7, i, ' ');
+            mvaddch(8, i, ' ');
+        }
+
+        strcpy(buf, "> Easy <");
+        mvprintw(6, (GAME_WIDTH/2) - strlen(buf)/2, buf);
+        
+        strcpy(buf, "Normal");
+        mvprintw(7, (GAME_WIDTH/2) - strlen(buf)/2, buf);
+
+        strcpy(buf, "Hard");
+        mvprintw(8, (GAME_WIDTH/2) - strlen(buf)/2, buf);
         break;
     case 1:
-        mvprintw(6, 13, "Easy");
-        mvprintw(7, 10, "> Normal <");
-        mvprintw(8, 13, "Hard");
+        for (int i = 1; i < GAME_WIDTH-1; i++)
+        {
+            mvaddch(6, i, ' ');
+            mvaddch(7, i, ' ');
+            mvaddch(8, i, ' ');
+        }
+
+        strcpy(buf, "Easy");
+        mvprintw(6, (GAME_WIDTH/2) - strlen(buf)/2, buf);
+        
+        strcpy(buf, "> Normal <");
+        mvprintw(7, (GAME_WIDTH/2) - strlen(buf)/2, buf);
+
+        strcpy(buf, "Hard");
+        mvprintw(8, (GAME_WIDTH/2) - strlen(buf)/2, buf);
         break;
     case 2:
-        mvprintw(6, 13, "Easy");
-        mvprintw(7, 12, "Normal");
-        mvprintw(8, 11, "> Hard <");
+        for (int i = 1; i < GAME_WIDTH-1; i++)
+        {
+            mvaddch(6, i, ' ');
+            mvaddch(7, i, ' ');
+            mvaddch(8, i, ' ');
+        }
+
+        strcpy(buf, "Easy");
+        mvprintw(6, (GAME_WIDTH/2) - strlen(buf)/2, buf);
+        
+        strcpy(buf, "Normal");
+        mvprintw(7, (GAME_WIDTH/2) - strlen(buf)/2, buf);
+
+        strcpy(buf, "> Hard <");
+        mvprintw(8, (GAME_WIDTH/2) - strlen(buf)/2, buf);
         break;
     default:
+        for (int i = 1; i < GAME_WIDTH-1; i++)
+        {
+            mvaddch(6, i, ' ');
+            mvaddch(7, i, ' ');
+            mvaddch(8, i, ' ');
+        }
         break;
     }
-    
+        
+    free(buf);
 
     // attron(COLOR_PAIR(1)); // Enable custom color 1
     // attron(A_BOLD); // Enable bold
