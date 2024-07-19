@@ -4,7 +4,13 @@
 
 directory_t *generate_directory(int desired_depth, int desired_elements)
 {
-    return gen_dir_aux(desired_depth, desired_elements , 0, desired_elements);
+    directory_t *d = gen_dir_aux(desired_depth,
+                                 desired_elements ,
+                                 0,
+                                  desired_elements);
+    find_target(d);
+
+    return d;
 }
 
 directory_t *gen_dir_aux(int desired_depth, int desired_elements, int depth,
@@ -67,6 +73,11 @@ directory_t *gen_dir_aux(int desired_depth, int desired_elements, int depth,
     return dir;
 }
 
+void find_target(directory_t *dir)
+{
+    // TODO
+}
+
 void free_directory(directory_t *dir)
 {
     for (int i = 0; i < dir->nb_files; ++i)
@@ -122,18 +133,31 @@ void render_directory(directory_t *dir)
 
 void render_aux(directory_t *dir, int x, int y)
 {
+    attron(COLOR_PAIR(2));
     mvprintw(x, y-1, "%s", dir->name);
+    attroff(COLOR_PAIR(2));
 
-    if (dir->nb_dirs + dir->nb_files >= 1)
+
+    int n;
+
+    if (dir->nb_dirs == 1 && !dir->nb_files)
     {
-        int n = (nb_elements_in_dir(dir)*2);
-
-        for (int i = x+1; i < n-1; ++i)
-        {
-            mvprintw(i, y, "|");
-        }
+        n = 4;
+    }
+    else if (dir->nb_dirs > 1 && !dir->nb_files)
+    {
+        n = nb_elements_in_dir(dir->dirs[0])*2 + 4;
+    }
+    else
+    {
+        n = (nb_elements_in_dir(dir)*2);
     }
     
+
+    for (int i = x+1; i < x+n-1; ++i)
+    {
+        mvprintw(i, y, "|");
+    }
 
     int newX = x+2;
 
@@ -150,7 +174,17 @@ void render_aux(directory_t *dir, int x, int y)
     {
         mvaddch(newX, y, 'L');
 
+        if (dir->files[i]->target)
+        {
+            attron(COLOR_PAIR(4));
+        }
+
         mvprintw(newX, y + 3, "%s", dir->files[i]);
+
+        if (dir->files[i]->target)
+        {
+            attroff(COLOR_PAIR(4));
+        }
 
         newX += 2;
     }

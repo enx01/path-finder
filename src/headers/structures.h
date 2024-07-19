@@ -36,6 +36,7 @@ extern struct timespec ts;
 struct file_t
 {
     char name[10];
+    int target;
 };
 typedef struct file_t file_t;
 
