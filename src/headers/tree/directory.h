@@ -12,6 +12,7 @@ void free_directory(directory_t *);
 void render_directory(directory_t *);
 void render_aux(directory_t *, int, int);
 
+int directory_depth(directory_t *);
 int nb_elements_in_dir(directory_t *);
 int nb_aux(directory_t *dir, int res);
 

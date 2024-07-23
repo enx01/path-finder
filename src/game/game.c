@@ -19,18 +19,44 @@ void run_game(game_t *g, player_t *p)
 {
     g->running = 1;
 
-    g->current = generate_directory(2, 5);
+    switch (g->difficulty)
+    {
+        case 0 :
+            g->current = generate_directory(1, 5);
+            break;
+        case 1 :
+            g->current = generate_directory(2, 5);
+            break;
+        case 2 :
+            g->current = generate_directory(3, 5);
+            break;
+    }
 
     fprintf(stderr, "number of elements in tree : %d\n", nb_elements_in_dir(g->current));
+    fprintf(stderr, "depth of tree : %d\n", directory_depth(g->current));
 
     ACTION a;
     while(g->running) 
     {
         a = handle_input(p);
 
+        update_game(g, p, a);
+
         render_game(g, p);
 
         nanosleep(&ts, NULL);
+    }
+}
+
+void update_game(game_t *g, player_t *p, ACTION a)
+{
+    switch (a)
+    {
+        case COMPUTE :
+            
+            break;
+        default :
+            break;
     }
 }
 

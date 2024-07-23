@@ -75,7 +75,7 @@ directory_t *gen_dir_aux(int desired_depth, int desired_elements, int depth,
 
 void find_target(directory_t *dir)
 {
-    // TODO
+    
 }
 
 void free_directory(directory_t *dir)
@@ -106,6 +106,35 @@ void free_directory(directory_t *dir)
 
     fprintf(stderr, "freeing dir %s\n", dir->name);
     free(dir);
+}
+
+int directory_depth(directory_t *dir)
+{
+    int depth = 1;
+
+    if (!dir->nb_dirs)
+    {
+        return !dir->nb_files ? 0 : 1;
+    }
+
+    int c[dir->nb_dirs];
+
+    for (int i = 0; i < dir->nb_dirs; ++i)
+    {
+        c[i] = directory_depth(dir->dirs[i]);
+    }
+
+    int max = c[0];
+
+    for (int i = 0; i < dir->nb_dirs; ++i)
+    {
+        if (c[i] > max)
+        {
+            max = c[i];
+        }
+    }
+
+    return depth + max;
 }
 
 int nb_elements_in_dir(directory_t *dir)
